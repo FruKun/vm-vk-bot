@@ -1,0 +1,16 @@
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    env_file:
+        - .env
+    restart: unless-stopped
+  flask:
+    build: .
+    expose:
+      - $PORT
+    env_file:
+        - .env
+    command: gunicorn -b 0.0.0.0:$PORT bot:app
+    restart: unless-stopped
