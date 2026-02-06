@@ -21,14 +21,9 @@ def main():
         message = data["object"]["message"]["text"]
 
         vk.messages.send(
-                message=get_callback(message),
-                random_id=vk_api.utils.get_random_id(),
-                peer_id=from_id
-                )
+            message=get_callback(from_id, message),
+            random_id=vk_api.utils.get_random_id(),
+            peer_id=from_id,
+        )
         return "ok"
     return "ok"
-
-
-@app.route("/test")
-def aboba():
-    return "test"
