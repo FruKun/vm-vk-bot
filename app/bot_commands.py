@@ -1,6 +1,3 @@
-import json
-
-import requests
 from config import admin_id
 from yandex_api import (
     response_get_instance,
@@ -56,45 +53,36 @@ def get_callback(from_id: int, message: str) -> str:
 def message_start_callback(from_id: int) -> str:
     if from_id not in admin_id:
         return """доступные команды:
-        /info,
-        /power_on,
+/info,
+/power_on,
 """
     else:
         return """доступные команды:
-        /info,
-        /power_on,
-        /power_off
+/info,
+/power_on,
+/power_off
 """
 
 
 def message_info_callback() -> str:
-    try:
-        return response_get_instance()["status"]
-    except requests.RequestException:
-        return "запрос не удался"
+    return f"status: {response_get_instance().json()["status"]}"
 
 
 def message_power_on_callback() -> str:
-    try:
-        response = response_post_start_instance()
-        if "error" in response:
-            return json.dumps(response["error"])
-        elif "response" in response:
-            return response["response"]["status"]
-        return "unknown error"
-    except requests.RequestException:
-        return "запрос не удался"
+    response = response_post_start_instance().json()
+    if "error" in response:
+        return response["error"]
+    elif "response" in response:
+        return response["response"]["status"]
+    return "unknown error"
 
 
 def message_power_off_callback(from_id: int) -> str:
     if from_id not in admin_id:
         return "Permission denied"
-    try:
-        response = response_post_stop_instance()
-        if "error" in response:
-            return json.dumps(response["error"])
-        elif "response" in response:
-            return response["response"]["status"]
-        return "unknown error"
-    except requests.RequestException:
-        return "запрос не удался"
+    response = response_post_stop_instance().json()
+    if "error" in response:
+        return response["error"]
+    elif "response" in response:
+        return response["response"]["status"]
+    return "unknown error"
