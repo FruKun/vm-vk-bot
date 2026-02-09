@@ -25,3 +25,5 @@ build-backend = "poetry.core.masonry.api"
 dev = [
     "debugpy (>=1.8.20,<2.0.0)"
 ]
+[tool.poetry.group.dev]
+optional = true

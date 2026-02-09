@@ -65,15 +65,20 @@ def message_start_callback(from_id: int) -> str:
 
 
 def message_info_callback() -> str:
-    return f"status: {response_get_instance().json()["status"]}"
+    if "status" in response_get_instance().json():
+        return f"status: {response_get_instance().json()["status"]}"
+    else:
+        return "unknown error"
 
 
 def message_power_on_callback() -> str:
     response = response_post_start_instance().json()
     if "error" in response:
         return response["error"]
-    elif "response" in response:
-        return response["response"]["status"]
+    elif "description" in response:
+        return response["description"]
+    if "code" in response and response["code"] == 9:
+        return "already running"
     return "unknown error"
 
 
@@ -83,6 +88,12 @@ def message_power_off_callback(from_id: int) -> str:
     response = response_post_stop_instance().json()
     if "error" in response:
         return response["error"]
+    elif "done" in response and response["done"]:
+        return "already stopped"
     elif "response" in response:
         return response["response"]["status"]
+    elif "description" in response:
+        return response["description"]
+    if "code" in response and response["code"] == 9:
+        return "already stopping"
     return "unknown error"
